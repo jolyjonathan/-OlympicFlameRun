@@ -1,0 +1,41 @@
+Création de la carte:
+
+    Utilisez Babylon.js pour créer la carte du jeu. Importez et positionnez les éléments nécessaires pour représenter le parcours.
+
+Modélisation du flambeau olympique:
+
+    Créez un modèle 3D du flambeau olympique à l'aide de Babylon.js.
+
+Animation du parcours:
+
+    Animez le déplacement du flambeau le long du parcours en utilisant les fonctionnalités d'animation de Babylon.js.
+
+Mini-jeux:
+
+    Concevez plusieurs mini-jeux qui représentent des étapes clés du parcours.
+    Intégrez ces mini-jeux dans le jeu principal.
+
+Interaction avec le flambeau:
+
+    Gérez l'interaction du joueur avec le flambeau pendant le parcours.
+    Assurez-vous que la progression du flambeau dépend des performances du joueur dans les mini-jeux.
+
+Gestion des règles du jeu:
+
+    Implémentez les règles du jeu, comme la réussite des mini-jeux, pour permettre au joueur de progresser.
+
+Fin du jeu:
+
+    Animez l'arrivée du flambeau à la vasque lorsque le joueur termine le parcours avec succès.
+
+Son et Effets Visuels:
+
+    Ajoutez des effets sonores et visuels pour rendre l'expérience plus immersive.
+
+Tests et ajustements:
+
+    Testez le jeu pour vous assurer que le déplacement du flambeau, les mini-jeux et les règles fonctionnent correctement. Effectuez des ajustements si nécessaire.
+
+Optimisation:
+
+    Optimisez les performances du jeu pour garantir une expérience fluide.

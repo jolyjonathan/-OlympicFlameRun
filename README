@@ -39,3 +39,9 @@ Tests et ajustements:
 Optimisation:
 
     Optimisez les performances du jeu pour garantir une expérience fluide.
+
+
+Launch server in local : npm run dev 
+Support : 
+- https://replit.com/talk/learn/3D-Games-with-BabylonJS-A-Starter-Guide/15957
+- https://github.com/WaelYasmina/babylontut

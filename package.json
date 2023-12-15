@@ -1,5 +1,5 @@
 {
-  "name": "babylontut",
+  "name": "vite-project",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,9 +9,6 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@babylonjs/core": "^6.9.0",
-    "@babylonjs/inspector": "^6.9.0",
-    "@babylonjs/loaders": "^6.9.0",
-    "vite": "^4.3.2"
+    "vite": "^5.0.0"
   }
 }

@@ -39,3 +39,9 @@ Tests et ajustements:
 Optimisation:
 
     Optimisez les performances du jeu pour garantir une expérience fluide.
+
+npm create vite@latest
+vanilla
+javascript
+npm install
+npm run dev

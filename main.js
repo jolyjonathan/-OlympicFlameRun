@@ -59,40 +59,51 @@ const createScene = function(){
     onReady: () => {
       // Positionner la caméra au niveau du sol une fois que la carte de hauteur est chargée
       camera.position.y = ground.getHeightAtCoordinates(camera.position.x, camera.position.z) + 3; // 2 est la hauteur des yeux d'un humain
+      let isJumping = false;
       engine.runRenderLoop(function(){
-        if (keys['Space'] && camera.position.y < ground.getHeightAtCoordinates(camera.position.x,camera.position.y)+maxJump) {
+        if (keys['Space']) {
+          isJumping = true;
+        } else {
+          isJumping = false;
+        }
+      
+        let groundHeight = ground.getHeightAtCoordinates(camera.position.x, camera.position.z) ;
+      
+        if (isJumping && camera.position.y < groundHeight + maxJump) {
           camera.position.y += 1; // 1 est la vitesse de montée, augmentez cette valeur pour monter plus vite
-        } else if (camera.position.y >= ground.getHeightAtCoordinates(camera.position.x,camera.position.y)+3){
+        } else if (camera.position.y > groundHeight+3){
           camera.position.y -= 1; // 1 est la vitesse de descente, augmentez cette valeur pour descendre plus vite
         }
-
+      
         let newPosition = camera.position.clone();
-
+      
         if (keys['KeyQ'] && camera.position.x > -dim) {
           newPosition.addInPlace(new BABYLON.Vector3(-1, 0, 0));
         }
-        
+
         if (keys['KeyD'] && camera.position.x < dim) {
           newPosition.addInPlace(new BABYLON.Vector3(1, 0, 0));
         }
-        
+
         if (keys['KeyZ'] && camera.position.z > -dim) {
           newPosition.addInPlace(new BABYLON.Vector3(0, 0, 1));
         }
-        
+
         if (keys['KeyS'] && camera.position.z < dim) {
           newPosition.addInPlace(new BABYLON.Vector3(0, 0, -1));
         }
       
         // Obtenir la hauteur du terrain à la nouvelle position
-        let groundHeight = ground.getHeightAtCoordinates(newPosition.x, newPosition.z);
+        groundHeight = ground.getHeightAtCoordinates(newPosition.x, newPosition.z);
       
         // Ajuster la position y de la caméra en fonction de la hauteur du terrain
-        newPosition.y = groundHeight + 3; // 3 est la hauteur des yeux d'un humain
+        if (!isJumping && newPosition.y < groundHeight + 3) {
+          newPosition.y = groundHeight + 3; // 3 est la hauteur des yeux d'un humain
+        }
       
         // Déplacer la caméra à la nouvelle position
         camera.position = newPosition;
-
+      
         scene.render();
       });
     }

@@ -44,4 +44,4 @@ npm create vite@latest
 vanilla
 javascript
 npm install
-npm run dev
+==> npm run dev

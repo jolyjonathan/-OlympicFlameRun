@@ -15,6 +15,40 @@ let ground;
 
 let keys = {};
 
+let startTime = Date.now();
+let sun;
+let sunSphere;
+let sunMaterial;
+let moon;
+let moonSphere;
+let moonMaterial;
+
+function createLights(scene) {
+  sun = new BABYLON.DirectionalLight("sun", new BABYLON.Vector3(0, -1, 0), scene);
+  sun.intensity = 1;
+  sun.diffuse = new BABYLON.Color3(1, 1, 0.98);
+  sun.specular = new BABYLON.Color3(1, 1, 1);
+
+  sunSphere = BABYLON.MeshBuilder.CreateSphere("sunSphere", {diameter: 50}, scene);
+  sunSphere.position = sun.position;
+
+  sunMaterial = new BABYLON.StandardMaterial("sunMaterial", scene);
+  sunMaterial.emissiveTexture = new BABYLON.Texture("textures/sun.jpg", scene);
+  sunSphere.material = sunMaterial;
+
+  moon = new BABYLON.DirectionalLight("moon", new BABYLON.Vector3(0, 1, 0), scene);
+  moon.intensity = 0.5;
+  moon.diffuse = new BABYLON.Color3(0.5, 0.5, 0.5);
+  moon.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+
+  moonSphere = BABYLON.MeshBuilder.CreateSphere("moonSphere", {diameter: 50}, scene);
+  moonSphere.position = moon.position;
+
+  moonMaterial = new BABYLON.StandardMaterial("moonMaterial", scene);
+  moonMaterial.emissiveTexture = new BABYLON.Texture("textures/moon.jpg", scene); // Remplacez "textures/moon.jpg" par le chemin de votre texture de lune
+  moonSphere.material = moonMaterial;
+}
+
 window.addEventListener('keydown', function(event) {
   keys[event.code] = true;
 });
@@ -23,13 +57,47 @@ window.addEventListener('keyup', function(event) {
   keys[event.code] = false;
 });
 
-const createScene = function(){
-  const scene = new BABYLON.Scene(engine);
+function createFlame(scene, cup) {
+  // Créer le système de particules pour la flamme
+  const flame = new BABYLON.ParticleSystem("flame", 2000, scene);
 
-  scene.enablePhysics();
+  // Configurer le système de particules
+  flame.particleTexture = new BABYLON.Texture("textures/flame.avif", scene); // Remplacez "textures/flame.png" par le chemin de votre texture de flamme
+  flame.emitter = new BABYLON.Vector3(cup.position.x, cup.position.y, cup.position.z); // La flamme émet à partir du haut de la coupe
+  flame.minEmitBox = new BABYLON.Vector3(-0.5, 0, -0.5); // La boîte d'émission minimale
+  flame.maxEmitBox = new BABYLON.Vector3(0.5, 0, 0.5); // La boîte d'émission maximale
 
-  // Créer une caméra universelle
-  let camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 2, -10), scene);
+  flame.color1 = new BABYLON.Color4(1, 0.5, 0, 1); // La couleur de la flamme
+  flame.color2 = new BABYLON.Color4(1, 0.5, 0, 1); // La couleur de la flamme
+  flame.colorDead = new BABYLON.Color4(0, 0, 0, 0.5); // La couleur de la flamme lorsqu'elle meurt
+
+  flame.minSize = 1; // La taille minimale des particules
+  flame.maxSize = 10; // La taille maximale des particules
+
+  flame.minLifeTime = 1; // Le temps de vie minimal des particules
+  flame.maxLifeTime = 4; // Le temps de vie maximal des particules
+
+  flame.emitRate = 500; // Le taux d'émission
+
+  flame.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE; // Le mode de fusion
+
+  flame.gravity = new BABYLON.Vector3(0, 9.81, 0); // La gravité
+
+  flame.direction1 = new BABYLON.Vector3(-1, 8, -1); // La direction de la flamme
+  flame.direction2 = new BABYLON.Vector3(1, 8, 1); // La direction de la flamme
+
+  flame.minAngularSpeed = 0; // La vitesse angulaire minimale
+  flame.maxAngularSpeed = Math.PI; // La vitesse angulaire maximale
+
+  flame.targetStopDuration = 0; // La durée d'arrêt cible
+
+  flame.disposeOnStop = false; // Ne pas disposer à l'arrêt
+
+  flame.start(); // Démarrer le système de particules
+}
+
+function createCamera(scene) {
+  camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(30, 2, -30), scene);
   // Activer les collisions de la caméra
   camera.checkCollisions = true;
   // Attacher le contrôle de la caméra au canvas
@@ -47,20 +115,30 @@ const createScene = function(){
   camera.keysDown = camera.keysDown.filter(k => k !== 83); // S
   camera.keysLeft = camera.keysLeft.filter(k => k !== 65); // A
   camera.keysRight = camera.keysRight.filter(k => k !== 68); // D
-  
-  // Créer un terrain à partir d'une image en niveaux de gris
+}
+
+function createGround(scene) {
   ground = MeshBuilder.CreateGroundFromHeightMap("ground", "heightmap/img6.png", { // Update the method call
     width: dim, // la largeur du terrain
     height: dim, // la hauteur du terrain
     subdivisions: 150, // le nombre de subdivisions
     minHeight: 0, // la hauteur minimale
-    maxHeight: dim/50, // la hauteur maximale
+    maxHeight: dim/30, // la hauteur maximale
     scene: scene,
     onReady: () => {
       // Positionner la caméra au niveau du sol une fois que la carte de hauteur est chargée
       camera.position.y = ground.getHeightAtCoordinates(camera.position.x, camera.position.z) + 3; // 2 est la hauteur des yeux d'un humain
       let isJumping = false;
       engine.runRenderLoop(function(){
+
+        let time = (Date.now() - startTime) / 1000; // temps en secondes
+        let speed = 2 * Math.PI / 360; // vitesse de rotation (1 tour toutes les 6 minutes)
+        sun.direction = new BABYLON.Vector3(-Math.sin(time * speed), Math.cos(time * speed), 0);
+        sunSphere.position = sun.direction.scale(-500); // Remplacez -500 par la distance que vous voulez entre le soleil et l'origine
+
+        moon.direction = new BABYLON.Vector3(Math.sin(time * speed), -Math.cos(time * speed), 0);
+        moonSphere.position = moon.direction.scale(500); // Remplacez -500 par la distance que vous voulez entre la lune et l'origine
+
         if (keys['Space']) {
           isJumping = true;
         } else {
@@ -123,20 +201,27 @@ const createScene = function(){
   ground.material = grassMaterial;
   ground.material.anisotropicFilteringLevel = 16; // Valeur arbitraire, ajustez selon vos besoins
   ground.material.diffuseTexture.updateSamplingMode(BABYLON.Texture.BILINEAR_SAMPLINGMODE);
+}
 
+function createCup(scene) {
+  const cup = BABYLON.MeshBuilder.CreateCylinder("cup", {diameter: 20, height: 50, tessellation: 32}, scene);
+  cup.position = new BABYLON.Vector3(0, 20, 0);
+  cup.checkCollisions = true;
+  createFlame(scene, cup);
+}
+
+function createScene() {
+  const scene = new BABYLON.Scene(engine);
+  scene.enablePhysics();
+  createCamera(scene);
+  createGround(scene);
+  createCup(scene);
+  createLights(scene);
   return scene;
 }
 
 const scene = createScene();
-
 scene.ambientColor = new BABYLON.Color3(0.5, 0.5, 0.5); // Ajustez la couleur ambiante de la scène
-// Créer une lumière directionnelle (le soleil)
-const sun = new BABYLON.DirectionalLight("sun", new BABYLON.Vector3(-1, -1, -1), scene);
-// Définir l'intensité de la lumière
-sun.intensity = 1;
-// Définir la couleur de la lumière
-sun.diffuse = new BABYLON.Color3(1, 1, 0.98); // une couleur légèrement jaune
-sun.specular = new BABYLON.Color3(1, 1, 1);
 
 window.addEventListener('resize', function(){
   engine.resize();

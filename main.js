@@ -129,6 +129,7 @@ function createGround(scene) {
       // Positionner la caméra au niveau du sol une fois que la carte de hauteur est chargée
       camera.position.y = ground.getHeightAtCoordinates(camera.position.x, camera.position.z) + 3; // 2 est la hauteur des yeux d'un humain
       let isJumping = false;
+      let newPosition = camera.position.clone();
       engine.runRenderLoop(function(){
 
         let time = (Date.now() - startTime) / 1000; // temps en secondes
@@ -153,22 +154,29 @@ function createGround(scene) {
           camera.position.y -= 1; // 1 est la vitesse de descente, augmentez cette valeur pour descendre plus vite
         }
       
-        let newPosition = camera.position.clone();
+        let rightVector = new BABYLON.Vector3(1, 0, 0);
+        let forwardVector = new BABYLON.Vector3(0, 0, 1);
+        let leftVector = new BABYLON.Vector3(-1, 0, 0);
+        let backwardVector = new BABYLON.Vector3(0, 0, -1);
+            
+        if (keys['KeyQ']) {
+          let rotatedLeft = BABYLON.Vector3.TransformNormal(leftVector, camera.getWorldMatrix());
+          newPosition.addInPlace(rotatedLeft);
+        }
       
-        if (keys['KeyQ'] && camera.position.x > -dim) {
-          newPosition.addInPlace(new BABYLON.Vector3(-1, 0, 0));
+        if (keys['KeyD']) {
+          let rotatedRight = BABYLON.Vector3.TransformNormal(rightVector, camera.getWorldMatrix());
+          newPosition.addInPlace(rotatedRight);
         }
-
-        if (keys['KeyD'] && camera.position.x < dim) {
-          newPosition.addInPlace(new BABYLON.Vector3(1, 0, 0));
+      
+        if (keys['KeyZ']) {
+          let rotatedForward = BABYLON.Vector3.TransformNormal(forwardVector, camera.getWorldMatrix());
+          newPosition.addInPlace(rotatedForward);
         }
-
-        if (keys['KeyZ'] && camera.position.z > -dim) {
-          newPosition.addInPlace(new BABYLON.Vector3(0, 0, 1));
-        }
-
-        if (keys['KeyS'] && camera.position.z < dim) {
-          newPosition.addInPlace(new BABYLON.Vector3(0, 0, -1));
+      
+        if (keys['KeyS']) {
+          let rotatedBackward = BABYLON.Vector3.TransformNormal(backwardVector, camera.getWorldMatrix());
+          newPosition.addInPlace(rotatedBackward);
         }
       
         // Obtenir la hauteur du terrain à la nouvelle position

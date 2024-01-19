@@ -22,10 +22,12 @@ let sunMaterial;
 let moon;
 let moonSphere;
 let moonMaterial;
+let flameLight;
+var flame;
 
 function createLights(scene) {
   sun = new BABYLON.DirectionalLight("sun", new BABYLON.Vector3(0, -1, 0), scene);
-  sun.intensity = 1;
+  sun.intensity = 0.5;
   sun.diffuse = new BABYLON.Color3(1, 1, 0.98);
   sun.specular = new BABYLON.Color3(1, 1, 1);
 
@@ -37,7 +39,7 @@ function createLights(scene) {
   sunSphere.material = sunMaterial;
 
   moon = new BABYLON.DirectionalLight("moon", new BABYLON.Vector3(0, 1, 0), scene);
-  moon.intensity = 0.5;
+  moon.intensity = 1;
   moon.diffuse = new BABYLON.Color3(0.5, 0.5, 0.5);
   moon.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
 
@@ -47,6 +49,9 @@ function createLights(scene) {
   moonMaterial = new BABYLON.StandardMaterial("moonMaterial", scene);
   moonMaterial.emissiveTexture = new BABYLON.Texture("textures/moon.jpg", scene); // Remplacez "textures/moon.jpg" par le chemin de votre texture de lune
   moonSphere.material = moonMaterial;
+
+  flameLight = new BABYLON.PointLight("flameLight", new BABYLON.Vector3(0, 0, 0), scene);
+  flameLight.intensity = 0.5;
 }
 
 window.addEventListener('keydown', function(event) {
@@ -135,7 +140,7 @@ function createGround(scene) {
         let time = (Date.now() - startTime) / 1000; // temps en secondes
         let speed = 2 * Math.PI / 360; // vitesse de rotation (1 tour toutes les 6 minutes)
         sun.direction = new BABYLON.Vector3(-Math.sin(time * speed), Math.cos(time * speed), 0);
-        sunSphere.position = sun.direction.scale(-500); // Remplacez -500 par la distance que vous voulez entre le soleil et l'origine
+        sunSphere.position = sun.direction.scale(500); // Remplacez -500 par la distance que vous voulez entre le soleil et l'origine
 
         moon.direction = new BABYLON.Vector3(Math.sin(time * speed), -Math.cos(time * speed), 0);
         moonSphere.position = moon.direction.scale(500); // Remplacez -500 par la distance que vous voulez entre la lune et l'origine
@@ -216,6 +221,13 @@ function createCup(scene) {
   cup.position = new BABYLON.Vector3(0, 20, 0);
   cup.checkCollisions = true;
   createFlame(scene, cup);
+  createFlameLight(scene, cup);
+}
+
+function createFlameLight(scene, cup) {
+  var flameLight = new BABYLON.PointLight("flameLight", new BABYLON.Vector3(0, 0, 0), scene);
+  flameLight.position = new BABYLON.Vector3(cup.position.x, cup.position.y+20, cup.position.z);
+  flameLight.intensity = 0.5;
 }
 
 function createScene() {

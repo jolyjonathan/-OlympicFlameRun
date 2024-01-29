@@ -183,15 +183,25 @@ function createScene() {
   createGround(scene);
   createLights(scene);
 
-  // Créez une boîte invisible pour la zone de téléportation
-  teleportZone = BABYLON.MeshBuilder.CreateBox("teleportZone", {size: 1}, scene);
-  teleportZone.position = new BABYLON.Vector3(10, 30, 10); // Position de la zone de téléportation
-  teleportZone.isVisible = true; // Rendre la boîte invisible
+  teleportZone = BABYLON.MeshBuilder.CreateCylinder("teleportZone", {height: 1, diameter: 20}, scene);
+  teleportZone.position = new BABYLON.Vector3(-400, 0, -400); 
 
-  // Assurez-vous que les collisions sont activées pour la zone de téléportation
+  let light = new BABYLON.PointLight("teleportZoneLight", teleportZone.position, scene);
+  light.intensity = 0.5; 
+
+  teleportZone.material = new BABYLON.StandardMaterial("teleportZoneMaterial", scene);
+
+  let texture = new BABYLON.Texture("textures/portail.jpg", scene);
+  texture.uScale = 0.1;
+  texture.vOffset = 0.1; 
+  teleportZone.material.diffuseTexture = texture;
+
+  scene.registerBeforeRender(function () {
+    texture.vOffset += 0.01; 
+  });
+
   teleportZone.checkCollisions = true;
 
-  // Définissez une fonction de rappel pour les collisions
   camera.onCollide = function (collidedMesh) {
     if (collidedMesh === teleportZone) {
       loadMiniGameScene();

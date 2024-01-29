@@ -62,45 +62,6 @@ window.addEventListener('keyup', function(event) {
   keys[event.code] = false;
 });
 
-function createFlame(scene, cup) {
-  // Créer le système de particules pour la flamme
-  const flame = new BABYLON.ParticleSystem("flame", 2000, scene);
-
-  // Configurer le système de particules
-  flame.particleTexture = new BABYLON.Texture("textures/flame.avif", scene); // Remplacez "textures/flame.png" par le chemin de votre texture de flamme
-  flame.emitter = new BABYLON.Vector3(cup.position.x, cup.position.y, cup.position.z); // La flamme émet à partir du haut de la coupe
-  flame.minEmitBox = new BABYLON.Vector3(-0.5, 0, -0.5); // La boîte d'émission minimale
-  flame.maxEmitBox = new BABYLON.Vector3(0.5, 0, 0.5); // La boîte d'émission maximale
-
-  flame.color1 = new BABYLON.Color4(1, 0.5, 0, 1); // La couleur de la flamme
-  flame.color2 = new BABYLON.Color4(1, 0.5, 0, 1); // La couleur de la flamme
-  flame.colorDead = new BABYLON.Color4(0, 0, 0, 0.5); // La couleur de la flamme lorsqu'elle meurt
-
-  flame.minSize = 1; // La taille minimale des particules
-  flame.maxSize = 10; // La taille maximale des particules
-
-  flame.minLifeTime = 1; // Le temps de vie minimal des particules
-  flame.maxLifeTime = 4; // Le temps de vie maximal des particules
-
-  flame.emitRate = 500; // Le taux d'émission
-
-  flame.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE; // Le mode de fusion
-
-  flame.gravity = new BABYLON.Vector3(0, 9.81, 0); // La gravité
-
-  flame.direction1 = new BABYLON.Vector3(-1, 8, -1); // La direction de la flamme
-  flame.direction2 = new BABYLON.Vector3(1, 8, 1); // La direction de la flamme
-
-  flame.minAngularSpeed = 0; // La vitesse angulaire minimale
-  flame.maxAngularSpeed = Math.PI; // La vitesse angulaire maximale
-
-  flame.targetStopDuration = 0; // La durée d'arrêt cible
-
-  flame.disposeOnStop = false; // Ne pas disposer à l'arrêt
-
-  flame.start(); // Démarrer le système de particules
-}
-
 function createCamera(scene) {
   camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(30, 2, -30), scene);
   // Activer les collisions de la caméra
@@ -123,81 +84,13 @@ function createCamera(scene) {
 }
 
 function createGround(scene) {
-  ground = MeshBuilder.CreateGroundFromHeightMap("ground", "heightmap/img6.png", { // Update the method call
+  ground = MeshBuilder.CreateGround("ground", { 
     width: dim, // la largeur du terrain
     height: dim, // la hauteur du terrain
     subdivisions: 150, // le nombre de subdivisions
     minHeight: 0, // la hauteur minimale
     maxHeight: dim/30, // la hauteur maximale
-    scene: scene,
-    onReady: () => {
-      // Positionner la caméra au niveau du sol une fois que la carte de hauteur est chargée
-      camera.position.y = ground.getHeightAtCoordinates(camera.position.x, camera.position.z) + 3; // 2 est la hauteur des yeux d'un humain
-      let isJumping = false;
-      let newPosition = camera.position.clone();
-      engine.runRenderLoop(function(){
-
-        let time = (Date.now() - startTime) / 1000; // temps en secondes
-        let speed = 2 * Math.PI / 360; // vitesse de rotation (1 tour toutes les 6 minutes)
-        sun.direction = new BABYLON.Vector3(-Math.sin(time * speed), Math.cos(time * speed), 0);
-        sunSphere.position = sun.direction.scale(500); // Remplacez -500 par la distance que vous voulez entre le soleil et l'origine
-
-        moon.direction = new BABYLON.Vector3(Math.sin(time * speed), -Math.cos(time * speed), 0);
-        moonSphere.position = moon.direction.scale(500); // Remplacez -500 par la distance que vous voulez entre la lune et l'origine
-
-        if (keys['Space']) {
-          isJumping = true;
-        } else {
-          isJumping = false;
-        }
-      
-        let groundHeight = ground.getHeightAtCoordinates(camera.position.x, camera.position.z) ;
-      
-        if (isJumping && camera.position.y < groundHeight + maxJump) {
-          camera.position.y += 1; // 1 est la vitesse de montée, augmentez cette valeur pour monter plus vite
-        } else if (camera.position.y > groundHeight+3){
-          camera.position.y -= 1; // 1 est la vitesse de descente, augmentez cette valeur pour descendre plus vite
-        }
-      
-        let rightVector = new BABYLON.Vector3(1, 0, 0);
-        let forwardVector = new BABYLON.Vector3(0, 0, 1);
-        let leftVector = new BABYLON.Vector3(-1, 0, 0);
-        let backwardVector = new BABYLON.Vector3(0, 0, -1);
-            
-        if (keys['KeyQ']) {
-          let rotatedLeft = BABYLON.Vector3.TransformNormal(leftVector, camera.getWorldMatrix());
-          newPosition.addInPlace(rotatedLeft);
-        }
-      
-        if (keys['KeyD']) {
-          let rotatedRight = BABYLON.Vector3.TransformNormal(rightVector, camera.getWorldMatrix());
-          newPosition.addInPlace(rotatedRight);
-        }
-      
-        if (keys['KeyZ']) {
-          let rotatedForward = BABYLON.Vector3.TransformNormal(forwardVector, camera.getWorldMatrix());
-          newPosition.addInPlace(rotatedForward);
-        }
-      
-        if (keys['KeyS']) {
-          let rotatedBackward = BABYLON.Vector3.TransformNormal(backwardVector, camera.getWorldMatrix());
-          newPosition.addInPlace(rotatedBackward);
-        }
-      
-        // Obtenir la hauteur du terrain à la nouvelle position
-        groundHeight = ground.getHeightAtCoordinates(newPosition.x, newPosition.z);
-      
-        // Ajuster la position y de la caméra en fonction de la hauteur du terrain
-        if (!isJumping && newPosition.y < groundHeight + 3) {
-          newPosition.y = groundHeight + 3; // 3 est la hauteur des yeux d'un humain
-        }
-      
-        // Déplacer la caméra à la nouvelle position
-        camera.position = newPosition;
-      
-        scene.render();
-      });
-    }
+    scene: scene
   });
   // Activer les collisions du sol
   ground.checkCollisions = true;
@@ -214,20 +107,73 @@ function createGround(scene) {
   ground.material = grassMaterial;
   ground.material.anisotropicFilteringLevel = 16; // Valeur arbitraire, ajustez selon vos besoins
   ground.material.diffuseTexture.updateSamplingMode(BABYLON.Texture.BILINEAR_SAMPLINGMODE);
-}
 
-function createCup(scene) {
-  const cup = BABYLON.MeshBuilder.CreateCylinder("cup", {diameter: 20, height: 50, tessellation: 32}, scene);
-  cup.position = new BABYLON.Vector3(0, 20, 0);
-  cup.checkCollisions = true;
-  createFlame(scene, cup);
-  createFlameLight(scene, cup);
-}
+    let groundHeight = 0; // Hauteur du sol pour un terrain plat
+    camera.position.y = groundHeight + 3; // 3 est la hauteur des yeux d'un humain
+    let isJumping = false;
+    let newPosition = camera.position.clone();
+    engine.runRenderLoop(function(){
 
-function createFlameLight(scene, cup) {
-  var flameLight = new BABYLON.PointLight("flameLight", new BABYLON.Vector3(0, 0, 0), scene);
-  flameLight.position = new BABYLON.Vector3(cup.position.x, cup.position.y+20, cup.position.z);
-  flameLight.intensity = 0.5;
+      let time = (Date.now() - startTime) / 1000; // temps en secondes
+      let speed = 2 * Math.PI / 360; // vitesse de rotation (1 tour toutes les 6 minutes)
+      sun.direction = new BABYLON.Vector3(-Math.sin(time * speed), Math.cos(time * speed), 0);
+      sunSphere.position = sun.direction.scale(500); // Remplacez -500 par la distance que vous voulez entre le soleil et l'origine
+
+      moon.direction = new BABYLON.Vector3(Math.sin(time * speed), -Math.cos(time * speed), 0);
+      moonSphere.position = moon.direction.scale(500); // Remplacez -500 par la distance que vous voulez entre la lune et l'origine
+
+      if (keys['Space']) {
+        isJumping = true;
+      } else {
+        isJumping = false;
+      }
+    
+      let groundHeight = ground.getHeightAtCoordinates(camera.position.x, camera.position.z) ;
+    
+      if (isJumping && camera.position.y < groundHeight + maxJump) {
+        camera.position.y += 1; // 1 est la vitesse de montée, augmentez cette valeur pour monter plus vite
+      } else if (camera.position.y > groundHeight+3){
+        camera.position.y -= 1; // 1 est la vitesse de descente, augmentez cette valeur pour descendre plus vite
+      }
+    
+      let rightVector = new BABYLON.Vector3(1, 0, 0);
+      let forwardVector = new BABYLON.Vector3(0, 0, 1);
+      let leftVector = new BABYLON.Vector3(-1, 0, 0);
+      let backwardVector = new BABYLON.Vector3(0, 0, -1);
+          
+      if (keys['KeyQ']) {
+        let rotatedLeft = BABYLON.Vector3.TransformNormal(leftVector, camera.getWorldMatrix());
+        newPosition.addInPlace(rotatedLeft);
+      }
+    
+      if (keys['KeyD']) {
+        let rotatedRight = BABYLON.Vector3.TransformNormal(rightVector, camera.getWorldMatrix());
+        newPosition.addInPlace(rotatedRight);
+      }
+    
+      if (keys['KeyZ']) {
+        let rotatedForward = BABYLON.Vector3.TransformNormal(forwardVector, camera.getWorldMatrix());
+        newPosition.addInPlace(rotatedForward);
+      }
+    
+      if (keys['KeyS']) {
+        let rotatedBackward = BABYLON.Vector3.TransformNormal(backwardVector, camera.getWorldMatrix());
+        newPosition.addInPlace(rotatedBackward);
+      }
+    
+      // Obtenir la hauteur du terrain à la nouvelle position
+      groundHeight = ground.getHeightAtCoordinates(newPosition.x, newPosition.z);
+    
+      // Ajuster la position y de la caméra en fonction de la hauteur du terrain
+      if (!isJumping && newPosition.y < groundHeight + 3) {
+        newPosition.y = groundHeight + 3; // 3 est la hauteur des yeux d'un humain
+      }
+    
+      // Déplacer la caméra à la nouvelle position
+      camera.position = newPosition;
+    
+      scene.render();
+    });
 }
 
 function createScene() {
@@ -235,7 +181,6 @@ function createScene() {
   scene.enablePhysics();
   createCamera(scene);
   createGround(scene);
-  createCup(scene);
   createLights(scene);
 
   // Créez une boîte invisible pour la zone de téléportation

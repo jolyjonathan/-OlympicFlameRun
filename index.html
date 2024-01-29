@@ -9,6 +9,35 @@
   </head>
   <body>
     <canvas id="renderCanvas"></canvas>
-    <script type="module" src="/main.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (localStorage.getItem('currentScene') === 'arc'){
+        var oldScript = document.querySelector('script[src^="/main.js"]');
+        if (oldScript) {
+          oldScript.parentNode.removeChild(oldScript);
+        }
+    
+        // Créez un nouveau script
+        var newScript = document.createElement('script');
+        newScript.src = 'minigames/arc.js';
+        newScript.type = 'module'; // Ajoutez cette ligne
+    
+        // Ajoutez le nouveau script au document
+        document.body.appendChild(newScript);
+      }else{
+        var oldScript = document.querySelector('script[src^="/arc.js"]');
+        if (oldScript) {
+          oldScript.parentNode.removeChild(oldScript);
+        }
+    
+        // Créez un nouveau script
+        var newScript = document.createElement('script');
+        newScript.src = 'main.js';
+        newScript.type = 'module'; // Ajoutez cette ligne
+    
+        // Ajoutez le nouveau script au document
+        document.body.appendChild(newScript);
+      }
+    });</script>
   </body>
 </html>

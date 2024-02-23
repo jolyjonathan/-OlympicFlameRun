@@ -1,5 +1,6 @@
 import * as BABYLON from '@babylonjs/core';
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'; // Add this import statement
+import { PointLight } from '@babylonjs/core/Lights/pointLight';
 
 const canvas = document.getElementById('renderCanvas');
 
@@ -119,4 +120,25 @@ canvas.addEventListener('keyup', function (event) {
     isJumping = false;
     // Ajoutez ici la logique supplémentaire si nécessaire lors du relâchement de la touche de saut
   }
+
+
+
+// Inside your createScene function, after setting up the ground and camera...
+
+// Create a box to represent the person
+const person = BABYLON.MeshBuilder.CreateBox('person', {}, scene);
+person.position.y = 1; // Position the person above the ground
+
+// Create a smaller box to represent the torch
+const torch = BABYLON.MeshBuilder.CreateBox('torch', { size: 0.2 }, scene);
+torch.parent = person; // Attach the torch to the person
+torch.position.y = 0.5; // Position the torch in the person's hand
+torch.position.z = 0.2; // Position the torch in front of the person
+
+// Create a light to represent the torch's flame
+const torchLight = new PointLight('torchLight', new BABYLON.Vector3(0, 0, 0), scene);
+torchLight.parent = torch; // Attach the light to the torch
+torchLight.intensity = 0.7; // Adjust the intensity of the light
+torchLight.diffuse = new BABYLON.Color3(1, 0.6, 0); // Give the light a fire-like color
+
 });

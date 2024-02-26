@@ -12,7 +12,7 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
       if (localStorage.getItem('currentScene') === 'arc'){
-        var oldScript = document.querySelector('script[src^="/main.js"]');
+        var oldScript = document.querySelector('script[src^="main.js"]');
         if (oldScript) {
           oldScript.parentNode.removeChild(oldScript);
         }
@@ -25,7 +25,7 @@
         // Ajoutez le nouveau script au document
         document.body.appendChild(newScript);
       }else{
-        var oldScript = document.querySelector('script[src^="/arc.js"]');
+        var oldScript = document.querySelector('script[src^="arc.js"]');
         if (oldScript) {
           oldScript.parentNode.removeChild(oldScript);
         }
@@ -39,5 +39,6 @@
         document.body.appendChild(newScript);
       }
     });</script>
+    <script src="babylon.objFileLoader.js"></script>
   </body>
 </html>

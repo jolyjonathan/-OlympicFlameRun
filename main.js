@@ -265,33 +265,7 @@ function createScene() {
   return scene;
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  if (localStorage.getItem('currentScene') === 'arc'){
-    var oldScript = document.querySelector('script[src^="/main.js"]');
-    if (oldScript) {
-      oldScript.parentNode.removeChild(oldScript);
-    }
 
-    // Créez un nouveau script
-    var newScript = document.createElement('script');
-    newScript.src = 'minigames/arc.js';
-
-    // Ajoutez le nouveau script au document
-    document.body.appendChild(newScript);
-  }else{
-    var oldScript = document.querySelector('script[src^="/arc.js"]');
-    if (oldScript) {
-      oldScript.parentNode.removeChild(oldScript);
-    }
-
-    // Créez un nouveau script
-    var newScript = document.createElement('script');
-    newScript.src = 'main.js';
-
-    // Ajoutez le nouveau script au document
-    document.body.appendChild(newScript);
-  }
-});
 
 function loadMiniGameScene() {
   if (document.querySelector('script[src^="main.js"]')){

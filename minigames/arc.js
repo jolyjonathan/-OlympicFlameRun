@@ -1,6 +1,7 @@
 import * as BABYLON from '@babylonjs/core';
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'; // Add this import statement
 import * as CANNON from 'cannon';
+import { PointLight } from '@babylonjs/core/Lights/pointLight';
 window.CANNON = CANNON;
 
 const canvas = document.getElementById('renderCanvas');
@@ -81,6 +82,44 @@ function createCamera(scene) {
   camera.keysDown = camera.keysDown.filter(k => k !== 83); // S
   camera.keysLeft = camera.keysLeft.filter(k => k !== 65); // A
   camera.keysRight = camera.keysRight.filter(k => k !== 68); // D
+
+
+
+  // Create a smaller box to represent the torch
+  const torch = BABYLON.MeshBuilder.CreatePlane('torch', { width :0.4, height : 1 }, scene);
+  torch.parent = camera; // Attach the torch to the camera
+  torch.position.y = -0.5; // Position the torch in the camera's hand
+  torch.position.z = 1.6; // Position the torch in front of the camera
+  torch.position.x = 1.2;
+
+  // Create a light to represent the torch's flame
+  const torchLight = new BABYLON.PointLight('torchLight', new BABYLON.Vector3(0, 0, 0), scene);
+  torchLight.parent = torch; // Attach the light to the torch
+  torchLight.intensity = 1.5; // Adjust the intensity of the light
+  torchLight.diffuse = new BABYLON.Color3(1, 0.6, 0); // Give the light a fire-like color
+
+  // Create a new standard material
+const torchMaterial = new BABYLON.StandardMaterial("torchMaterial", scene);
+
+// Apply a texture to the material
+torchMaterial.diffuseTexture = new BABYLON.Texture("../public/torche.png", scene);
+torchMaterial.diffuseTexture.hasAlpha = true; // Enable transparency
+// Assign the material to the torch
+torch.material = torchMaterial;
+
+// Disable lighting on the torch's material
+torchMaterial.disableLighting = true;
+
+// Set an emissive color on the torch's material
+torchMaterial.emissiveColor = new BABYLON.Color3(1, 1, 1); // White color
+
+// Use the same texture as an emissive texture
+torchMaterial.emissiveTexture = torchMaterial.diffuseTexture;
+
+
+
+
+
 }
 
 function createGround(scene) {
@@ -207,6 +246,8 @@ function createScene() {
       loadMiniGameScene();
     }
   };
+
+ 
   return scene;
 }
 
@@ -224,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ajoutez le nouveau script au document
     document.body.appendChild(newScript);
   }else{
-    var oldScript = document.querySelector('script[src^="/arc.js"]');
+    var oldScript = document.querySelector('script[src^="/minigames/arc.js"]');
     if (oldScript) {
       oldScript.parentNode.removeChild(oldScript);
     }
@@ -268,4 +309,8 @@ canvas.addEventListener('click', function() {
     canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
     canvas.requestPointerLock();
   }
+
+
+
+
 });

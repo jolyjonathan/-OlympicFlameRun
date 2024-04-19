@@ -98,6 +98,21 @@ function createCamera(scene) {
   torchLight.intensity = 1.5; // Adjust the intensity of the light
   torchLight.diffuse = new BABYLON.Color3(1, 0.6, 0); // Give the light a fire-like color
 
+  // Créez une animation pour l'intensité de la lumière
+const lightIntensityAnimation = new BABYLON.Animation("lightIntensityAnimation", "intensity", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+
+// Ajoutez les clés à l'animation
+const intensityKeys = [
+  { frame: 0, value: 1.5 },
+  { frame: 15, value: 1.45 },
+  { frame: 30, value: 1.5 }
+];
+lightIntensityAnimation.setKeys(intensityKeys);
+
+// Appliquez l'animation à la lumière de la torche
+scene.beginDirectAnimation(torchLight, [lightIntensityAnimation], 0, 30, true);
+
+
   // Create a new standard material
 const torchMaterial = new BABYLON.StandardMaterial("torchMaterial", scene);
 
@@ -115,6 +130,39 @@ torchMaterial.emissiveColor = new BABYLON.Color3(1, 1, 1); // White color
 
 // Use the same texture as an emissive texture
 torchMaterial.emissiveTexture = torchMaterial.diffuseTexture;
+
+
+// Créez un système de particules pour la flamme
+const flameSystem = new BABYLON.ParticleSystem("flameSystem", 2000, scene);
+
+// Attachez le système de particules à la torche
+flameSystem.emitter = torch;
+
+// Configurez le système de particules pour ressembler à une flamme
+flameSystem.particleTexture = new BABYLON.Texture("../public/flame.png", scene);
+flameSystem.minEmitBox = new BABYLON.Vector3(-0.2, 0, -0.2);
+flameSystem.maxEmitBox = new BABYLON.Vector3(0.2, 0, 0.2);
+flameSystem.color1 = new BABYLON.Color4(1, 0.5, 0, 1);
+flameSystem.color2 = new BABYLON.Color4(1, 0.5, 0, 1);
+flameSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.5);
+flameSystem.minSize = 0.03;
+flameSystem.maxSize = 0.1;
+flameSystem.minLifeTime = 0.02;
+flameSystem.maxLifeTime = 0.3;
+flameSystem.emitRate = 5000;
+flameSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+flameSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
+flameSystem.direction1 = new BABYLON.Vector3(-1, 8, -1);
+flameSystem.direction2 = new BABYLON.Vector3(1, 8, 1);
+flameSystem.minAngularSpeed = 0;
+flameSystem.maxAngularSpeed = Math.PI;
+flameSystem.minEmitPower = 1;
+flameSystem.maxEmitPower = 3;
+flameSystem.updateSpeed = 0.005;
+
+// Démarrez le système de particules
+flameSystem.start();
+
 
 
 

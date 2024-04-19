@@ -2,7 +2,7 @@ import * as BABYLON from '@babylonjs/core';
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'; // Add this import statement
 import * as CANNON from 'cannon';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
-import 'babylonjs-loaders';
+
 window.CANNON = CANNON;
 
 const canvas = document.getElementById('renderCanvas');

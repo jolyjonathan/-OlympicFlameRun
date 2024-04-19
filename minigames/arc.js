@@ -1,6 +1,7 @@
 import * as BABYLON from '@babylonjs/core';
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'; // Add this import statement
 import * as CANNON from 'cannon';
+import { PointLight } from '@babylonjs/core/Lights/pointLight';
 window.CANNON = CANNON;
 
 const canvas = document.getElementById('renderCanvas');
@@ -222,7 +223,7 @@ function createScene() {
   createLights(scene);
 
   teleportZone = BABYLON.MeshBuilder.CreateCylinder("teleportZone", {height: 1, diameter: 20}, scene);
-  teleportZone.position = new BABYLON.Vector3(-400, 1, -400); 
+  teleportZone.position = new BABYLON.Vector3(-400, 0, -400); 
 
   let light = new BABYLON.PointLight("teleportZoneLight", teleportZone.position, scene);
   light.intensity = 0.5; 
@@ -245,6 +246,8 @@ function createScene() {
       loadMiniGameScene();
     }
   };
+
+ 
   return scene;
 }
 
@@ -262,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ajoutez le nouveau script au document
     document.body.appendChild(newScript);
   }else{
-    var oldScript = document.querySelector('script[src^="/arc.js"]');
+    var oldScript = document.querySelector('script[src^="/minigames/arc.js"]');
     if (oldScript) {
       oldScript.parentNode.removeChild(oldScript);
     }
@@ -311,4 +314,3 @@ canvas.addEventListener('click', function() {
 
 
 });
-

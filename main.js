@@ -120,6 +120,86 @@ function createCamera(scene) {
   camera.keysDown = camera.keysDown.filter(k => k !== 83); // S
   camera.keysLeft = camera.keysLeft.filter(k => k !== 65); // A
   camera.keysRight = camera.keysRight.filter(k => k !== 68); // D
+
+
+
+  // Create a smaller box to represent the torch
+  const torch = BABYLON.MeshBuilder.CreatePlane('torch', { width :0.4, height : 1 }, scene);
+  torch.parent = camera; // Attach the torch to the camera
+  torch.position.y = -0.5; // Position the torch in the camera's hand
+  torch.position.z = 1.6; // Position the torch in front of the camera
+  torch.position.x = 1.2;
+
+  // Create a light to represent the torch's flame
+  const torchLight = new BABYLON.PointLight('torchLight', new BABYLON.Vector3(0, 0, 0), scene);
+  torchLight.parent = torch; // Attach the light to the torch
+  torchLight.intensity = 1.5; // Adjust the intensity of the light
+  torchLight.diffuse = new BABYLON.Color3(1, 0.6, 0); // Give the light a fire-like color
+
+  // Créez une animation pour l'intensité de la lumière
+const lightIntensityAnimation = new BABYLON.Animation("lightIntensityAnimation", "intensity", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+
+// Ajoutez les clés à l'animation
+const intensityKeys = [
+  { frame: 0, value: 1.5 },
+  { frame: 15, value: 1.45 },
+  { frame: 30, value: 1.5 }
+];
+lightIntensityAnimation.setKeys(intensityKeys);
+
+// Appliquez l'animation à la lumière de la torche
+scene.beginDirectAnimation(torchLight, [lightIntensityAnimation], 0, 30, true);
+
+
+  // Create a new standard material
+const torchMaterial = new BABYLON.StandardMaterial("torchMaterial", scene);
+
+// Apply a texture to the material
+torchMaterial.diffuseTexture = new BABYLON.Texture("../public/torche.png", scene);
+torchMaterial.diffuseTexture.hasAlpha = true; // Enable transparency
+// Assign the material to the torch
+torch.material = torchMaterial;
+
+// Disable lighting on the torch's material
+torchMaterial.disableLighting = true;
+
+// Set an emissive color on the torch's material
+torchMaterial.emissiveColor = new BABYLON.Color3(1, 1, 1); // White color
+
+// Use the same texture as an emissive texture
+torchMaterial.emissiveTexture = torchMaterial.diffuseTexture;
+
+
+// Créez un système de particules pour la flamme
+const flameSystem = new BABYLON.ParticleSystem("flameSystem", 2000, scene);
+
+// Attachez le système de particules à la torche
+flameSystem.emitter = torch;
+
+// Configurez le système de particules pour ressembler à une flamme
+flameSystem.particleTexture = new BABYLON.Texture("../public/flame.png", scene);
+flameSystem.minEmitBox = new BABYLON.Vector3(-0.2, 0, -0.2);
+flameSystem.maxEmitBox = new BABYLON.Vector3(0.2, 0, 0.2);
+flameSystem.color1 = new BABYLON.Color4(10, 0, 0, 1);
+flameSystem.color2 = new BABYLON.Color4(10, 65, 0, 1);
+flameSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.5);
+flameSystem.minSize = 0.01;
+flameSystem.maxSize = 0.03;
+flameSystem.minLifeTime = 0.02;
+flameSystem.maxLifeTime = 0.3;
+flameSystem.emitRate = 400;
+flameSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+flameSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
+flameSystem.direction1 = new BABYLON.Vector3(-1, 8, -1);
+flameSystem.direction2 = new BABYLON.Vector3(1, 8, 1);
+flameSystem.minAngularSpeed = 0;
+flameSystem.maxAngularSpeed = Math.PI;
+flameSystem.minEmitPower = 1;
+flameSystem.maxEmitPower = 3;
+flameSystem.updateSpeed = 0.005;
+
+// Démarrez le système de particules
+flameSystem.start();
 }
 
 function createGround(scene) {

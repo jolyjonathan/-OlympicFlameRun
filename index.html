@@ -19,7 +19,7 @@
     
         // Créez un nouveau script
         var newScript = document.createElement('script');
-        newScript.src = 'arc.js';
+        newScript.src = "{{asset('arc.js')}}";
         newScript.type = 'module'; // Ajoutez cette ligne
     
         // Ajoutez le nouveau script au document
@@ -32,7 +32,7 @@
     
         // Créez un nouveau script
         var newScript = document.createElement('script');
-        newScript.src = 'main.js';
+        newScript.src = "{{asset('main.js')}}";
         newScript.type = 'module'; // Ajoutez cette ligne
     
         // Ajoutez le nouveau script au document

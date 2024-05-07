@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OlympicFlameRun</title>
+    <link rel="stylesheet" crossorigin href="/assets/index-COW2HRrB.css">
+  </head>
+  <body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (localStorage.getItem('currentScene') === 'arc'){
+        var oldScript = document.querySelector('script[src^="main.js"]');
+        if (oldScript) {
+          oldScript.parentNode.removeChild(oldScript);
+        }
+    
+        // Créez un nouveau script
+        var newScript = document.createElement('script');
+        newScript.src = 'arc.js';
+        newScript.type = 'module'; // Ajoutez cette ligne
+    
+        // Ajoutez le nouveau script au document
+        document.body.appendChild(newScript);
+      }else{
+        var oldScript = document.querySelector('script[src^="arc.js"]');
+        if (oldScript) {
+          oldScript.parentNode.removeChild(oldScript);
+        }
+    
+        // Créez un nouveau script
+        var newScript = document.createElement('script');
+        newScript.src = 'main.js';
+        newScript.type = 'module'; // Ajoutez cette ligne
+    
+        // Ajoutez le nouveau script au document
+        document.body.appendChild(newScript);
+      }
+    });</script>
+    <script src="babylon.objFileLoader.js"></script>
+  </body>
+</html>

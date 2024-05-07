@@ -155,7 +155,7 @@ scene.beginDirectAnimation(torchLight, [lightIntensityAnimation], 0, 30, true);
 const torchMaterial = new BABYLON.StandardMaterial("torchMaterial", scene);
 
 // Apply a texture to the material
-torchMaterial.diffuseTexture = new BABYLON.Texture("../public/torche.png", scene);
+torchMaterial.diffuseTexture = new BABYLON.Texture("./public/torche.png", scene);
 torchMaterial.diffuseTexture.hasAlpha = true; // Enable transparency
 // Assign the material to the torch
 torch.material = torchMaterial;
@@ -177,7 +177,7 @@ const flameSystem = new BABYLON.ParticleSystem("flameSystem", 2000, scene);
 flameSystem.emitter = torch;
 
 // Configurez le système de particules pour ressembler à une flamme
-flameSystem.particleTexture = new BABYLON.Texture("../public/flame.png", scene);
+flameSystem.particleTexture = new BABYLON.Texture("./public/flame.png", scene);
 flameSystem.minEmitBox = new BABYLON.Vector3(-0.2, 0, -0.2);
 flameSystem.maxEmitBox = new BABYLON.Vector3(0.2, 0, 0.2);
 flameSystem.color1 = new BABYLON.Color4(10, 0, 0, 1);

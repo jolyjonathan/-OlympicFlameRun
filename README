@@ -3,7 +3,7 @@ OlympicFlameRun :
     Jonathan Joly
     Nicolas Giliberto
 
-  Lunch Project : 
+  Launch Project : 
     git clone https://github.com/jolyjonathan/-OlympicFlameRun.git
     cd -OlympicFlameRun
     npm run dev

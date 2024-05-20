@@ -319,7 +319,7 @@ function createScene() {
   createLights(scene);
 
   teleportZone = BABYLON.MeshBuilder.CreateCylinder("teleportZone", {height: 1, diameter: 20}, scene);
-  teleportZone.position = new BABYLON.Vector3(-400, 6, -400); 
+  teleportZone.position = new BABYLON.Vector3(-400, 8, -400); 
 
   let light = new BABYLON.PointLight("teleportZoneLight", teleportZone.position, scene);
   light.intensity = 0.5; 
